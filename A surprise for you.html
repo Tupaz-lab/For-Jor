@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>A Quiet Little Page For Jor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #fff5f7 0%, #ffe3e8 100%);
+      font-family: 'Georgia', serif;
+      color: #4a3b32;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Screen Transitions */
+    .screen {
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Card Box */
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 36px 28px;
+      box-shadow: 0 16px 36px rgba(224, 142, 160, 0.2);
+      border: 1px solid #ffe1e8;
+      text-align: center;
+    }
+
+    /* Lock Screen */
+    .pass-input {
+      letter-spacing: 12px;
+      font-size: 26px;
+      text-align: center;
+      padding: 12px 18px;
+      width: 180px;
+      margin: 20px auto 14px;
+      display: block;
+      border: 2px solid #f3b6c2;
+      border-radius: 12px;
+      background: #fffafa;
+      color: #c94b6e;
+      outline: none;
+    }
+
+    .pass-input:focus {
+      border-color: #d85a7f;
+      box-shadow: 0 0 10px rgba(216, 90, 127, 0.25);
+    }
+
+    .btn {
+      background: #e57390;
+      color: white;
+      border: none;
+      padding: 11px 26px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .btn:hover {
+      background: #d85a7f;
+      transform: scale(1.03);
+    }
+
+    .error-msg {
+      color: #d14968;
+      font-size: 13px;
+      margin-top: 8px;
+      height: 18px;
+    }
+
+    /* Rose Bloom Animation */
+    .rose-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 280px;
+    }
+
+    .flower-box {
+      position: relative;
+      width: 140px;
+      height: 140px;
+    }
+
+    .petal {
+      position: absolute;
+      width: 48px;
+      height: 72px;
+      background: linear-gradient(135deg, #ff9ebb, #e25b84);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      top: 30px;
+      left: 46px;
+      transform-origin: bottom center;
+      opacity: 0;
+      transform: scale(0.2) rotate(0deg);
+      transition: all 1.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .flower-box.bloomed .p1 { transform: scale(1) rotate(-40deg); opacity: 0.95; }
+    .flower-box.bloomed .p2 { transform: scale(1) rotate(40deg); opacity: 0.95; }
+    .flower-box.bloomed .p3 { transform: scale(1) rotate(-80deg); opacity: 0.9; }
+    .flower-box.bloomed .p4 { transform: scale(1) rotate(80deg); opacity: 0.9; }
+    .flower-box.bloomed .p5 { transform: scale(1) rotate(0deg); opacity: 1; }
+
+    .rose-text {
+      font-size: 24px;
+      font-weight: 600;
+      color: #c94b6e;
+      margin-top: 22px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1.2s ease 1s, transform 1.2s ease 1s;
+    }
+
+    .flower-box.bloomed + .rose-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Main Letter */
+    .letter-body {
+      text-align: left;
+      line-height: 1.8;
+      font-size: 16px;
+      color: #4f3d35;
+      background: #fffafb;
+      padding: 28px 24px;
+      border-radius: 14px;
+      border: 1px dashed #f5c4ce;
+      white-space: pre-line;
+      margin-bottom: 28px;
+    }
+
+    /* Mini Envelope Snippets */
+    .interactive-section {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .envelope-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .envelope-card {
+      background: #fff;
+      border: 1px solid #f6cfd7;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(220, 160, 175, 0.12);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .envelope-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 18px rgba(220, 160, 175, 0.22);
+    }
+
+    .envelope-title {
+      font-weight: bold;
+      color: #c94b6e;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .envelope-content {
+      font-size: 13px;
+      color: #634f46;
+      line-height: 1.5;
+      display: none;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dotted #f2c1cb;
+    }
+
+    .voucher {
+      background: #fff0f3;
+      border: 1px dashed #d85a7f;
+      padding: 8px;
+      border-radius: 8px;
+      color: #af3256;
+      font-weight: bold;
+    }
+
+    /* Spotify Music Embed */
+    .music-box {
+      margin-top: 36px;
+      padding-top: 20px;
+      border-top: 1px solid #f8d3dc;
+      text-align: center;
+    }
+
+    .music-title {
+      font-style: italic;
+      color: #a84260;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Step 1: Password Screen -->
+  <section id="lock-screen" class="screen active card">
+    <h2 style="color: #c94b6e; font-size: 22px;">A Secret Note For Jor</h2>
+    <p style="font-size: 14px; color: #84675e; margin-top: 6px;">Enter the passcode to step inside:</p>
+    <input type="password" id="passcode" class="pass-input" maxlength="4" placeholder="••••">
+    <button class="btn" onclick="checkPassword()">Unlock</button>
+    <div id="error" class="error-msg"></div>
+  </section>
+
+  <!-- Step 2: Blooming Rose Screen -->
+  <section id="rose-screen" class="screen card">
+    <div class="rose-stage">
+      <div class="flower-box" id="flower">
+        <div class="petal p1"></div>
+        <div class="petal p2"></div>
+        <div class="petal p3"></div>
+        <div class="petal p4"></div>
+        <div class="petal p5"></div>
+      </div>
+      <div class="rose-text">I love you Jor</div>
+    </div>
+  </section>
+
+  <!-- Step 3: Main Letter Screen -->
+  <section id="main-screen" class="screen card">
+    <div class="letter-body">Dearest Jor,
+
+To my favorite person
+I built this quiet little page just for you so you'll always have a safe, sweet place to come back to whenever things feel heavy.
+Seeing the time, care, and soft colors you put into drawing this for me completely melted my heart. You never have to worry about "causing me trouble" you are the most comforting, gentle part of my days, and seeing how much you care about my feelings means everything to me. I'm always right here on the other end of the line—whether we're having deep talks, talking about late-night cravings, or just being complete dorks together. Thank you for being my soft space, pudd. I can't wait for our golf date, but until then, this drawing (and you) have my whole heart.
+
+Love always,
+Tupaz</div>
+
+    <!-- Clickable Little Notes -->
+    <div class="interactive-section">
+      <p style="font-size: 14px; color: #a35d70; margin-bottom: 8px;">Tap these tiny envelopes:</p>
+      <div class="envelope-grid">
+        <div class="envelope-card" onclick="toggleNote(1)">
+          <div class="envelope-title">✉️ Note 01</div>
+          <p style="font-size: 12px; color: #9c8078;">Open snippet</p>
+          <div class="envelope-content" id="note-1">
+            "Just a reminder: your warmth lights up my entire day, no matter how chaotic things get."
+          </div>
+        </div>
+
+        <div class="envelope-card" onclick="toggleNote(2)">
+          <div class="envelope-title">✉️ Note 02</div>
+          <p style="font-size: 12px; color: #9c8078;">Open snippet</p>
+          <div class="envelope-content" id="note-2">
+            "Late night calls, random laughs, or cozy silence—every single second with you is my absolute favorite."
+          </div>
+        </div>
+
+        <div class="envelope-card" onclick="toggleNote(3)">
+          <div class="envelope-title">⛳ Note 03</div>
+          <p style="font-size: 12px; color: #9c8078;">Claim ticket</p>
+          <div class="envelope-content" id="note-3">
+            <div class="voucher">
+              🎟️ Tupaz is ready for the next golf date!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Music Player -->
+    <div class="music-box">
+      <div class="music-title">"This song reminds me of you"</div>
+      <iframe 
+        style="border-radius:12px; max-width: 100%;" 
+        src="https://open.spotify.com/embed/track/2aL4lMGhWdPpyPL6COPou7?utm_source=generator&theme=0" 
+        width="100%" 
+        height="152" 
+        frameBorder="0" 
+        allowfullscreen="" 
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+        loading="lazy">
+      </iframe>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  function checkPassword() {
+    const code = document.getElementById("passcode").value;
+    const error = document.getElementById("error");
+
+    if (code === "0000") {
+      error.innerText = "";
+      goToScreen("lock-screen", "rose-screen");
+
+      // Trigger Rose Bloom animation
+      setTimeout(() => {
+        document.getElementById("flower").classList.add("bloomed");
+      }, 300);
+
+      // Transition to Letter after blooming
+      setTimeout(() => {
+        goToScreen("rose-screen", "main-screen");
+      }, 4200);
+
+    } else {
+      error.innerText = "Incorrect passcode. Try again!";
+    }
+  }
+
+  function goToScreen(fromId, toId) {
+    const fromScreen = document.getElementById(fromId);
+    const toScreen = document.getElementById(toId);
+
+    fromScreen.classList.remove("active");
+    setTimeout(() => {
+      toScreen.classList.add("active");
+    }, 400);
+  }
+
+  function toggleNote(index) {
+    const note = document.getElementById(`note-${index}`);
+    const isShowing = note.style.display === "block";
+    note.style.display = isShowing ? "none" : "block";
+  }
+
+  // Allow pressing Enter key to unlock
+  document.getElementById("passcode").addEventListener("keyup", function(event) {
+    if (event.key === "Enter") {
+      checkPassword();
+    }
+  });
+</script>
+
+</body>
+</html>
